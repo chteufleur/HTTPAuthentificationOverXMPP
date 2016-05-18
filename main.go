@@ -2,6 +2,7 @@ package main
 
 import (
   "git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP.git/http"
+  "git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP.git/xmpp"
 
   "github.com/jimlawless/cfg"
 
@@ -26,32 +27,46 @@ func init() {
 	if err != nil {
 		log.Fatal("Failed to load configuration file.", err)
 	}
-  // TODO make config
+
+  // XMPP config
+  xmpp.Addr = mapConfig["xmpp_server_address"] + ":" + mapConfig["xmpp_server_port"]
+  xmpp.JidStr = mapConfig["xmpp_hostname"]
+  xmpp.Secret = mapConfig["xmpp_secret"]
+  xmpp.Debug = mapConfig["xmpp_debug"] == "true"
 }
 
 
 func request() {
   for {
-    jid := <- http.ChanRequest
-    log.Println(jid)
-    method := <- http.ChanRequest
-    log.Println(method)
-    domain := <- http.ChanRequest
-    log.Println(domain)
-    transaction := <- http.ChanRequest
-    log.Println(transaction)
+    client := new(xmpp.Client)
+
+    client.JID = getChanString(http.ChanRequest)
+    client.Method = getChanString(http.ChanRequest)
+    client.Domain = getChanString(http.ChanRequest)
+    client.Transaction = getChanString(http.ChanRequest)
 
     chanResult := <- http.ChanRequest
-    // TODO make the XMPP request
     if v, ok := chanResult.(chan bool); ok {
-      v <- false
+      client.ChanReply = v
     }
+
+    go client.QueryClient()
   }
 }
 
+func getChanString(c chan interface{}) string {
+  ret := ""
+  i := <- c
+  if v, ok := i.(string); ok {
+    ret = v
+  }
+  return ret
+}
+
 func main() {
-  // TODO start ressources
+
   go http.Run()
+  go xmpp.Run()
   go request()
 
   sigchan := make(chan os.Signal, 1)
