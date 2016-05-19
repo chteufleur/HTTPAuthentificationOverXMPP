@@ -18,6 +18,9 @@ const (
   DOMAIN_ACCESS  = "domain"
   TRANSACTION_ID = "transaction_id"
 
+  ROUTE_ROOT = "/"
+  ROUTE_AUTH = "/toto"
+
   RETURN_VALUE_OK  = "OK"
   RETURN_VALUE_NOK = "NOK"
 )
@@ -55,6 +58,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
   if answer {
     ret = RETURN_VALUE_OK
   }
+  // TODO reply with JSON format
   fmt.Fprintf(w, ret)
 }
 
@@ -62,8 +66,9 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 
 func Run() {
   log.Printf("%sRunning", LogInfo)
-  http.HandleFunc("/", indexHandler) // set router
-  http.HandleFunc("/toto", authHandler)
+
+  http.HandleFunc(ROUTE_ROOT, indexHandler)
+  http.HandleFunc(ROUTE_AUTH, authHandler)
 
   port := strconv.Itoa(HttpPortBind)
   log.Printf("%sListenning on port %s", LogInfo, port)
