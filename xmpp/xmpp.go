@@ -25,6 +25,9 @@ var (
 
 	ChanAction = make(chan string)
 
+  waitMessageAnswers = make(map[string]*Client)
+  waitIQAnswers = make(map[string]*Client)
+
 	Debug = true
 )
 
@@ -47,6 +50,12 @@ func mainXMPP() {
 		case *xmpp.Presence:
 
 		case *xmpp.Message:
+      client := waitMessageAnswers[v.Thread]
+      if client != nil {
+        // TODO chek the answer
+        client.ChanReply <- true
+      }
+      delete(waitMessageAnswers, v.Thread)
 
 		case *xmpp.Iq:
 			switch v.PayloadName().Space {
@@ -83,7 +92,7 @@ func must(v interface{}, err error) interface{} {
 	return v
 }
 
-
+/*
 func SendMessage(to, subject, message string) {
 	m := xmpp.Message{From: jid.Domain, To: to, Body: message, Type: "chat"}
 
@@ -94,7 +103,7 @@ func SendMessage(to, subject, message string) {
 	log.Printf("%sSenp message %v", LogInfo, m)
 	comp.Out <- m
 }
-
+*/
 
 func execDiscoCommand(iq *xmpp.Iq) {
 	log.Printf("%sDiscovery item iq received", LogInfo)

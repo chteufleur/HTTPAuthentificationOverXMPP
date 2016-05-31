@@ -2,10 +2,11 @@ package http
 
 import (
   "fmt"
+  "log"
   "net/http"
   "strconv"
   "strings"
-  "log"
+  "time"
 )
 
 const (
@@ -26,6 +27,7 @@ var (
   HttpPortBind = 9090
 
   ChanRequest = make(chan interface{}, 5)
+  TimeoutSec = 60
 )
 
 
@@ -50,8 +52,13 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
   ChanRequest <- transaction
   ChanRequest <- chanAnswer
 
-  answer := <- chanAnswer
   ret := RETURN_VALUE_NOK
+  answer := false
+  select {
+  case answer = <- chanAnswer:
+  case <- time.After(time.Duration(TimeoutSec) * time.Second):
+    answer = false
+  }
   if answer {
     ret = RETURN_VALUE_OK
   }

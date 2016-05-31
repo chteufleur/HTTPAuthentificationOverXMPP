@@ -9,6 +9,7 @@ import (
   "log"
   "os"
 	"os/signal"
+  "strconv"
 	"syscall"
 	"time"
 )
@@ -27,6 +28,13 @@ func init() {
 	if err != nil {
 		log.Fatal("Failed to load configuration file.", err)
 	}
+
+  // HTTP config
+  httpTimeout, err := strconv.Atoi(mapConfig["http_timeoute_sec"])
+  if err == nil {
+    log.Println("Define HTTP timeout to %d second", httpTimeout)
+    http.TimeoutSec = httpTimeout
+  }
 
   // XMPP config
   xmpp.Addr = mapConfig["xmpp_server_address"] + ":" + mapConfig["xmpp_server_port"]
