@@ -19,6 +19,8 @@ var (
 
 	SoftVersion = ""
 
+	stanzaID = 0
+
 	jid    xmpp.JID
 	stream = new(xmpp.Stream)
 	comp   = new(xmpp.XMPP)
@@ -26,7 +28,6 @@ var (
 	ChanAction = make(chan string)
 
   WaitMessageAnswers = make(map[string]*Client)
-  waitIQAnswers = make(map[string]*Client)
 
 	Debug = true
 )
@@ -51,14 +52,11 @@ func mainXMPP() {
 		case *xmpp.Presence:
 
 		case *xmpp.Message:
-			client := WaitMessageAnswers[v.Confir.ID]
-			if client != nil {
-				if v.Error != nil {
-					client.ChanReply <- false
-				} else {
-					client.ChanReply <- true
-				}
-				delete(WaitMessageAnswers, v.Confir.ID)
+			confirm := v.Confir
+			if confirm != nil {
+				client := WaitMessageAnswers[confirm.Id]
+				delete(WaitMessageAnswers, confirm.Id)
+				processConfirm(v, client)
 			}
 
 		case *xmpp.Iq:
@@ -77,6 +75,13 @@ func mainXMPP() {
 				reply.PayloadEncode(&xmpp.SoftwareVersion{Name: "HTTP authentification component", Version: SoftVersion})
 				comp.Out <- reply
 
+			case xmpp.NSHTTPAuth:
+				confirm := &xmpp.Confirm{}
+				v.PayloadDecode(confirm)
+				client := WaitMessageAnswers[v.Id]
+				delete(WaitMessageAnswers, v.Id)
+				processConfirm(v, client)
+
 			default:
 				reply := v.Response(xmpp.IQTypeError)
 				reply.PayloadEncode(xmpp.NewError("cancel", xmpp.FeatureNotImplemented, ""))
@@ -89,25 +94,27 @@ func mainXMPP() {
 	}
 }
 
+func processConfirm(x interface{}, client *Client) {
+	mes, mesOK := x.(*xmpp.Message)
+	iq, iqOK := x.(*xmpp.Iq)
+
+	if client != nil {
+		if mesOK && mes.Error != nil {
+			client.ChanReply <- false
+		} else if iqOK && iq.Error != nil {
+			client.ChanReply <- false
+		} else {
+			client.ChanReply <- true
+		}
+	}
+}
+
 func must(v interface{}, err error) interface{} {
 	if err != nil {
 		log.Fatal(LogError, err)
 	}
 	return v
 }
-
-/*
-func SendMessage(to, subject, message string) {
-	m := xmpp.Message{From: jid.Domain, To: to, Body: message, Type: "chat"}
-
-	if subject != "" {
-		m.Subject = subject
-	}
-
-	log.Printf("%sSenp message %v", LogInfo, m)
-	comp.Out <- m
-}
-*/
 
 func execDiscoCommand(iq *xmpp.Iq) {
 	log.Printf("%sDiscovery item iq received", LogInfo)

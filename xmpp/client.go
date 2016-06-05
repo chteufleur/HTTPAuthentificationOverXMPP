@@ -4,6 +4,7 @@ import (
   "git.kingpenguin.tk/chteufleur/go-xmpp.git/src/xmpp"
 
   "log"
+  "strconv"
 )
 
 type Client struct {
@@ -18,11 +19,22 @@ type Client struct {
 
 func (client *Client) QueryClient() {
   log.Printf("%sQuery JID %s", LogInfo, client.JID)
-  client.askViaMessage()
+  clientJID, _ := xmpp.ParseJID(client.JID)
+  if clientJID.Resource == "" {
+    client.askViaMessage()
+  } else {
+    client.askViaIQ()
+  }
 }
 
 func (client *Client) askViaIQ() {
-
+  stanzaID++
+  stanzaIDstr := strconv.Itoa(stanzaID)
+  m := xmpp.Iq{Type: xmpp.IQTypeGet, To: client.JID, From: jid.Domain, Id: stanzaIDstr}
+  confirm := &xmpp.Confirm{Id: client.Transaction, Method: client.Method, URL: client.Domain}
+  m.PayloadEncode(confirm)
+  WaitMessageAnswers[stanzaIDstr] = client
+  comp.Out <- m
 }
 
 func (client *Client) askViaMessage() {
@@ -30,10 +42,9 @@ func (client *Client) askViaMessage() {
 
   m.Thread = xmpp.SessionID()
   m.Body = "Auth request for "+client.Domain+".\nTransaction identifier is: "+client.Transaction+"\nReply to this message to confirm the request."
-  m.Confir = &xmpp.Confirm{ID: client.Transaction, Method: client.Method, URL: client.Domain}
+  m.Confir = &xmpp.Confirm{Id: client.Transaction, Method: client.Method, URL: client.Domain}
 
   log.Printf("%sSenp message %v", LogInfo, m)
-  comp.Out <- m
-
   WaitMessageAnswers[client.Transaction] = client
+  comp.Out <- m
 }
