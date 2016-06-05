@@ -25,11 +25,12 @@ var (
 
 	ChanAction = make(chan string)
 
-  waitMessageAnswers = make(map[string]*Client)
+  WaitMessageAnswers = make(map[string]*Client)
   waitIQAnswers = make(map[string]*Client)
 
 	Debug = true
 )
+
 
 
 func Run() {
@@ -50,12 +51,15 @@ func mainXMPP() {
 		case *xmpp.Presence:
 
 		case *xmpp.Message:
-      client := waitMessageAnswers[v.Thread]
-      if client != nil {
-        // TODO chek the answer
-        client.ChanReply <- true
-      }
-      delete(waitMessageAnswers, v.Thread)
+			client := WaitMessageAnswers[v.Confir.ID]
+			if client != nil {
+				if v.Error != nil {
+					client.ChanReply <- false
+				} else {
+					client.ChanReply <- true
+				}
+				delete(WaitMessageAnswers, v.Confir.ID)
+			}
 
 		case *xmpp.Iq:
 			switch v.PayloadName().Space {

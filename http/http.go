@@ -1,6 +1,8 @@
 package http
 
 import (
+  "git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP.git/xmpp"
+
   "fmt"
   "log"
   "net/http"
@@ -61,6 +63,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
   case answer = <- chanAnswer:
   case <- time.After(time.Duration(TimeoutSec) * time.Second):
     answer = false
+    delete(xmpp.WaitMessageAnswers, transaction)
   }
   if answer {
     ret = RETURN_VALUE_OK
