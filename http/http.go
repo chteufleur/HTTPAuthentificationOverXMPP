@@ -57,19 +57,13 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
   ChanRequest <- transaction
   ChanRequest <- chanAnswer
 
-  ret := RETURN_VALUE_NOK
-  answer := false
   select {
   case answer = <- chanAnswer:
+    w.WriteHeader(http.StatusOK)
   case <- time.After(time.Duration(TimeoutSec) * time.Second):
-    answer = false
+    w.WriteHeader(http.StatusForbidden)
     delete(xmpp.WaitMessageAnswers, transaction)
   }
-  if answer {
-    ret = RETURN_VALUE_OK
-  }
-  // TODO reply with JSON format
-  fmt.Fprintf(w, ret)
 }
 
 
