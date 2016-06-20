@@ -61,10 +61,10 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 		if answer {
 			w.WriteHeader(http.StatusOK)
 		} else {
-			w.WriteHeader(http.StatusForbidden)
+			w.WriteHeader(http.StatusUnauthorized)
 		}
 	case <-time.After(time.Duration(TimeoutSec) * time.Second):
-		w.WriteHeader(http.StatusForbidden)
+		w.WriteHeader(http.StatusUnauthorized)
 		delete(xmpp.WaitMessageAnswers, transaction)
 	}
 }
