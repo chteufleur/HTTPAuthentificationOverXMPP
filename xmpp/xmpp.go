@@ -27,12 +27,10 @@ var (
 
 	ChanAction = make(chan string)
 
-  WaitMessageAnswers = make(map[string]*Client)
+	WaitMessageAnswers = make(map[string]*Client)
 
 	Debug = true
 )
-
-
 
 func Run() {
 	log.Printf("%sRunning", LogInfo)
