@@ -57,8 +57,12 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	ChanRequest <- chanAnswer
 
 	select {
-	case answer = <-chanAnswer:
-		w.WriteHeader(http.StatusOK)
+	case answer := <-chanAnswer:
+		if answer {
+			w.WriteHeader(http.StatusOK)
+		} else {
+			w.WriteHeader(http.StatusForbidden)
+		}
 	case <-time.After(time.Duration(TimeoutSec) * time.Second):
 		w.WriteHeader(http.StatusForbidden)
 		delete(xmpp.WaitMessageAnswers, transaction)
