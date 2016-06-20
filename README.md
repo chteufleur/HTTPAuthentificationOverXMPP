@@ -21,7 +21,7 @@ Configure the gateway by editing the ``httpAuth.cfg`` file in order to give all 
 
 ### Utilization
 To ask authorization, just send an HTTP request to the path ``/auth`` with parameters:
- * jid: JID of the user (<user@host/resource> or <user@host>)
+ * jid: JID of the user (user@host/resource or user@host)
  * domain: Domain you want to access
  * method: Method you access the domain
  * transaction_id: Transaction identifier
