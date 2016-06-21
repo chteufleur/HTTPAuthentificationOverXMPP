@@ -19,12 +19,23 @@ go get git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP.git
 ### Configure
 Configure the gateway by editing the ``httpAuth.cfg`` file in order to give all XMPP component and HTTP server informations.
 
+XMPP
+ * xmpp_server_address : Component server address connection (default: 127.0.0.1)
+ * xmpp_server_port : Component server port connection (default: 5347)
+ * xmpp_hostname : Component hostname
+ * xmpp_secret : Component password
+ * xmpp_debug : Enable debug log at true (default: false)
+
+HTTP
+ * http_port : HTTP port to bind (default: 9090)
+ * http_timeoute_sec : Define a timeout if user did not give an answer to the request (default: 60)
+
 ### Utilization
 To ask authorization, just send an HTTP request to the path ``/auth`` with parameters:
- * jid: JID of the user (user@host/resource or user@host)
- * domain: Domain you want to access
- * method: Method you access the domain
- * transaction_id: Transaction identifier
+ * jid : JID of the user (user@host/resource or user@host)
+ * domain : Domain you want to access
+ * method : Method you access the domain
+ * transaction_id : Transaction identifier
 
 Example:
 ```
