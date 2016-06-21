@@ -13,7 +13,7 @@ Provide an HTTP anthentification over XMPP. Implementation of [XEP-0070](https:/
 Download the CA at [https://kingpenguin.tk/ressources/cacert.pem](https://kingpenguin.tk/ressources/cacert.pem), then install it on your operating system.
 Once installed, go into your $GOPATH directory and go get the source code.
 ```sh
-go get git.kingpenguin.tk/chteufleur/go-xmpp4steam.git
+go get git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP.git
 ```
 
 ### Configure
