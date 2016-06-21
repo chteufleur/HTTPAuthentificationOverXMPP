@@ -17,6 +17,9 @@ import (
 const (
 	Version               = "v0.1.0"
 	configurationFilePath = "httpAuth.cfg"
+
+	default_xmpp_server_address = "127.0.0.1"
+	default_xmpp_server_port = "5347"
 )
 
 var (
@@ -32,17 +35,26 @@ func init() {
 	// HTTP config
 	httpTimeout, err := strconv.Atoi(mapConfig["http_timeoute_sec"])
 	if err == nil {
-		log.Println("Define HTTP timeout to %d second", httpTimeout)
+		log.Println("Define HTTP timeout to "+strconv.Itoa(httpTimeout)+" second")
 		http.TimeoutSec = httpTimeout
 	}
 	httpPort, err := strconv.Atoi(mapConfig["http_port"])
 	if err == nil {
-		log.Println("Define HTTP port to %d", httpPort)
+		log.Println("Define HTTP port to "+strconv.Itoa(httpPort))
 		http.HttpPortBind = httpPort
 	}
 
 	// XMPP config
-	xmpp.Addr = mapConfig["xmpp_server_address"] + ":" + mapConfig["xmpp_server_port"]
+	xmpp_server_address := mapConfig["xmpp_server_address"]
+	if xmpp_server_address == "" {
+		xmpp_server_address = default_xmpp_server_address
+	}
+	xmpp_server_port := mapConfig["xmpp_server_port"]
+	if xmpp_server_port == "" {
+		xmpp_server_port = default_xmpp_server_port
+	}
+
+	xmpp.Addr = xmpp_server_address + ":" + xmpp_server_port
 	xmpp.JidStr = mapConfig["xmpp_hostname"]
 	xmpp.Secret = mapConfig["xmpp_secret"]
 	xmpp.Debug = mapConfig["xmpp_debug"] == "true"
