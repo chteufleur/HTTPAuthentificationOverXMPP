@@ -43,3 +43,7 @@ GET /auth?jid=user@host/resource&domain=example.org&method=POST&transaction_id=W
 ```
 
 This will send a request to the given JID. If the user accept, the server will return HTTP code 200, otherwise it will return HTTP code 401.
+
+
+## Help
+To get any help, please visit the XMPP conference room at [httpauth@muc.kingpenguin.tk](xmpp:httpauth@muc.kingpenguin.tk?join) with your prefered client, or [with your browser](https://jappix.kingpenguin.tk/?r=httpauth@muc.kingpenguin.tk).
