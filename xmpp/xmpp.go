@@ -28,6 +28,7 @@ var (
 	ChanAction = make(chan string)
 
 	WaitMessageAnswers = make(map[string]*Client)
+	WaitIqMessages     = make(map[string]*Client)
 
 	Debug = true
 )
@@ -76,14 +77,21 @@ func mainXMPP() {
 			case xmpp.NSHTTPAuth:
 				confirm := &xmpp.Confirm{}
 				v.PayloadDecode(confirm)
-				client := WaitMessageAnswers[v.Id]
-				delete(WaitMessageAnswers, v.Id)
+				client := WaitIqMessages[v.Id]
+				delete(WaitIqMessages, v.Id)
 				processConfirm(v, client)
 
 			default:
-				reply := v.Response(xmpp.IQTypeError)
-				reply.PayloadEncode(xmpp.NewError("cancel", xmpp.FeatureNotImplemented, ""))
-				comp.Out <- reply
+				// Handle reply iq that doesn't contain HTTP-Auth namespace
+				client := WaitIqMessages[v.Id]
+				delete(WaitIqMessages, v.Id)
+				processConfirm(v, client)
+
+				if client == nil {
+					reply := v.Response(xmpp.IQTypeError)
+					reply.PayloadEncode(xmpp.NewError("cancel", xmpp.FeatureNotImplemented, ""))
+					comp.Out <- reply
+				}
 			}
 
 		default:

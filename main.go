@@ -15,11 +15,11 @@ import (
 )
 
 const (
-	Version               = "v0.1.0"
+	Version               = "v0.1.1"
 	configurationFilePath = "httpAuth.cfg"
 
 	default_xmpp_server_address = "127.0.0.1"
-	default_xmpp_server_port = "5347"
+	default_xmpp_server_port    = "5347"
 )
 
 var (
@@ -35,12 +35,12 @@ func init() {
 	// HTTP config
 	httpTimeout, err := strconv.Atoi(mapConfig["http_timeoute_sec"])
 	if err == nil {
-		log.Println("Define HTTP timeout to "+strconv.Itoa(httpTimeout)+" second")
+		log.Println("Define HTTP timeout to " + strconv.Itoa(httpTimeout) + " second")
 		http.TimeoutSec = httpTimeout
 	}
 	httpPort, err := strconv.Atoi(mapConfig["http_port"])
 	if err == nil {
-		log.Println("Define HTTP port to "+strconv.Itoa(httpPort))
+		log.Println("Define HTTP port to " + strconv.Itoa(httpPort))
 		http.HttpPortBind = httpPort
 	}
 

@@ -32,7 +32,7 @@ func (client *Client) askViaIQ() {
 	m := xmpp.Iq{Type: xmpp.IQTypeGet, To: client.JID, From: jid.Domain, Id: stanzaIDstr}
 	confirm := &xmpp.Confirm{Id: client.Transaction, Method: client.Method, URL: client.Domain}
 	m.PayloadEncode(confirm)
-	WaitMessageAnswers[stanzaIDstr] = client
+	WaitIqMessages[stanzaIDstr] = client
 	comp.Out <- m
 }
 
