@@ -20,6 +20,7 @@ const (
 	METHOD_ACCESS  = "method"
 	DOMAIN_ACCESS  = "domain"
 	TRANSACTION_ID = "transaction_id"
+	TIMEOUTE       = "timeout"
 
 	ROUTE_ROOT = "/"
 	ROUTE_AUTH = "/auth"
@@ -32,7 +33,8 @@ var (
 	HttpPortBind = 9090
 
 	ChanRequest = make(chan interface{}, 5)
-	TimeoutSec  = 60
+	TimeoutSec  = 60  // 1 min
+	MaxTimeout  = 300 // 5 min
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +48,16 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	method := strings.Join(r.Form[METHOD_ACCESS], "")
 	domain := strings.Join(r.Form[DOMAIN_ACCESS], "")
 	transaction := strings.Join(r.Form[TRANSACTION_ID], "")
+	timeoutStr := strings.Join(r.Form[TIMEOUTE], "")
 	log.Printf("%sAuth %s", LogDebug, jid)
+
+	timeout, err := strconv.Atoi(timeoutStr)
+	if err != nil {
+		timeout = TimeoutSec
+	}
+	if timeout > MaxTimeout {
+		timeout = MaxTimeout
+	}
 
 	chanAnswer := make(chan bool)
 
@@ -63,7 +74,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			w.WriteHeader(http.StatusUnauthorized)
 		}
-	case <-time.After(time.Duration(TimeoutSec) * time.Second):
+	case <-time.After(time.Duration(timeout) * time.Second):
 		w.WriteHeader(http.StatusUnauthorized)
 		delete(xmpp.WaitMessageAnswers, transaction)
 	}
