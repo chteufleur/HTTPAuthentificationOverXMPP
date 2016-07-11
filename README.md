@@ -40,7 +40,7 @@ To ask authorization, just send an HTTP request to the path ``/auth`` with param
 
 Example:
 ```
-GET /auth?jid=user@host/resource&domain=example.org&method=POST&transaction_id=WhatEverYouWant&timeout=120 HTTP/1.1
+GET /auth?jid=user%40host%2fresource&domain=example.org&method=POST&transaction_id=WhatEverYouWant&timeout=120 HTTP/1.1
 ```
 
 This will send a request to the given JID. If the user accept, the server will return HTTP code 200, otherwise it will return HTTP code 401.
