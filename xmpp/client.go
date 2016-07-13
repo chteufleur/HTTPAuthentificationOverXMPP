@@ -40,7 +40,9 @@ func (client *Client) askViaMessage() {
 	m := xmpp.Message{From: jid.Domain, To: client.JID, Type: "normal"}
 
 	m.Thread = xmpp.SessionID()
-	m.Body = "Auth request for " + client.Domain + ".\nTransaction identifier is: " + client.Transaction + "\nReply to this message to confirm the request."
+	m.Body = "HTTP (" + client.Method + ") Authorization for " + client.Domain + " (id: " + client.Transaction + ")."
+	m.Body += "\nReply to this message to confirm the request."
+	m.Body += "\nIf your client doesn't support that functionnality, please send back the identifier to confirm the request."
 	m.Confir = &xmpp.Confirm{Id: client.Transaction, Method: client.Method, URL: client.Domain}
 
 	log.Printf("%sSenp message %v", LogInfo, m)
