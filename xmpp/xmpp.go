@@ -56,6 +56,15 @@ func mainXMPP() {
 				client := WaitMessageAnswers[confirm.Id]
 				delete(WaitMessageAnswers, confirm.Id)
 				processConfirm(v, client)
+			} else {
+				// If body is the confirmation id, it will be considerated as accepted.
+				// In order to be compatible with all clients.
+				client := WaitMessageAnswers[v.Body]
+				jidFrom, _ := xmpp.ParseJID(v.From)
+				if client != nil && client.JID == jidFrom.Bare() {
+					delete(WaitMessageAnswers, v.Body)
+					processConfirm(v, client)
+				}
 			}
 
 		case *xmpp.Iq:
