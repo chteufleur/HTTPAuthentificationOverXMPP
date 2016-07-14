@@ -30,7 +30,10 @@ const (
 )
 
 var (
-	HttpPortBind = 9090
+	HttpPortBind  = 9090
+	HttpsPortBind = 9093
+	CertPath      = "./cert.pem"
+	KeyPath       = "./key.pem"
 
 	ChanRequest = make(chan interface{}, 5)
 	TimeoutSec  = 60  // 1 min
@@ -52,7 +55,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%sAuth %s", LogDebug, jid)
 
 	timeout, err := strconv.Atoi(timeoutStr)
-	if err != nil {
+	if err != nil || timeout <= 0 {
 		timeout = TimeoutSec
 	}
 	if timeout > MaxTimeout {
@@ -86,9 +89,27 @@ func Run() {
 	http.HandleFunc(ROUTE_ROOT, indexHandler)
 	http.HandleFunc(ROUTE_AUTH, authHandler)
 
+	if HttpPortBind > 0 {
+		go runHttp()
+	}
+	if HttpsPortBind > 0 {
+		go runHttps()
+	}
+}
+
+func runHttp() {
 	port := strconv.Itoa(HttpPortBind)
-	log.Printf("%sListenning on port %s", LogInfo, port)
-	err := http.ListenAndServe(":"+port, nil) // set listen port
+	log.Printf("%sHTTP listenning on port %s", LogInfo, port)
+	err := http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		log.Fatal("%sListenAndServe: ", LogError, err)
+	}
+}
+
+func runHttps() {
+	port := strconv.Itoa(HttpsPortBind)
+	log.Printf("%sHTTPS listenning on port %s", LogInfo, port)
+	err := http.ListenAndServeTLS(":"+port, CertPath, KeyPath, nil)
 	if err != nil {
 		log.Fatal("%sListenAndServe: ", LogError, err)
 	}

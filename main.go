@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	Version               = "v0.1.1"
+	Version               = "v0.2"
 	configurationFilePath = "httpAuth.cfg"
 
 	default_xmpp_server_address = "127.0.0.1"
@@ -34,7 +34,7 @@ func init() {
 
 	// HTTP config
 	httpTimeout, err := strconv.Atoi(mapConfig["http_timeoute_sec"])
-	if err == nil {
+	if err == nil && httpTimeout > 0 && httpTimeout < http.MaxTimeout {
 		log.Println("Define HTTP timeout to " + strconv.Itoa(httpTimeout) + " second")
 		http.TimeoutSec = httpTimeout
 	}
@@ -42,6 +42,13 @@ func init() {
 	if err == nil {
 		log.Println("Define HTTP port to " + strconv.Itoa(httpPort))
 		http.HttpPortBind = httpPort
+	}
+	httpsPort, err := strconv.Atoi(mapConfig["https_port"])
+	if err == nil {
+		log.Println("Define HTTPS port to " + strconv.Itoa(httpsPort))
+		http.HttpsPortBind = httpsPort
+		http.CertPath = mapConfig["https_cert_path"]
+		http.KeyPath = mapConfig["https_key_path"]
 	}
 
 	// XMPP config
