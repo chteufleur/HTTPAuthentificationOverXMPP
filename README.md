@@ -52,4 +52,4 @@ A demo version can be found at [auth.xmpp.kingpenguin.tk](http://auth.xmpp.kingp
 
 
 ## Help
-To get any help, please visit the XMPP conference room at [httpauth@muc.kingpenguin.tk](xmpp:httpauth@muc.kingpenguin.tk?join) with your prefered client, or [with your browser](https://jappix.kingpenguin.tk/?r=httpauth@muc.kingpenguin.tk).
+To get any help, please visit the XMPP conference room at [httpauth@muc.kingpenguin.tk](xmpp://httpauth@muc.kingpenguin.tk?join) with your prefered client, or [with your browser](https://jappix.kingpenguin.tk/?r=httpauth@muc.kingpenguin.tk).
