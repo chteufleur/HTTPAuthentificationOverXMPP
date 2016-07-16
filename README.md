@@ -37,7 +37,7 @@ To ask authorization, just send an HTTP request to the path ``/auth`` with param
  * jid : JID of the user (user@host/resource or user@host)
  * domain : Domain you want to access
  * method : Method you access the domain
- * transaction_id : Transaction identifier
+ * transaction_id : Transaction identifier (auto generated if not provide)
  * timeout : Timeout of the request in second (default : 60, max : 300)
 
 Example:
