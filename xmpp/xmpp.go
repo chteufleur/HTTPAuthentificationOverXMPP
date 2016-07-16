@@ -4,6 +4,7 @@ import (
 	"git.kingpenguin.tk/chteufleur/go-xmpp.git/src/xmpp"
 
 	"log"
+	"strings"
 )
 
 const (
@@ -117,7 +118,13 @@ func processConfirm(x interface{}, client *Client) {
 		if mesOK && mes.Error != nil {
 			client.ChanReply <- false
 		} else if iqOK && iq.Error != nil {
-			client.ChanReply <- false
+			if iq.Error.Condition().Local == "service-unavailable" {
+				// send by message if client doesn't implemente it
+				client.JID = strings.SplitN(client.JID, "/", 2)[0]
+				go client.QueryClient()
+			} else {
+				client.ChanReply <- false
+			}
 		} else {
 			client.ChanReply <- true
 		}
