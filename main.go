@@ -76,6 +76,11 @@ func request() {
 		client.Domain = getChanString(http.ChanRequest)
 		client.Transaction = getChanString(http.ChanRequest)
 
+		if client.Transaction == "" {
+			// Random transaction ID generation
+			client.Transaction = xmpp.SessionID()
+		}
+
 		chanResult := <-http.ChanRequest
 		if v, ok := chanResult.(chan bool); ok {
 			client.ChanReply = v

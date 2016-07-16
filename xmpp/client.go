@@ -3,8 +3,13 @@ package xmpp
 import (
 	"git.kingpenguin.tk/chteufleur/go-xmpp.git/src/xmpp"
 
+	"crypto/rand"
 	"log"
 	"strconv"
+)
+
+const (
+	dictionary = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 )
 
 type Client struct {
@@ -48,4 +53,15 @@ func (client *Client) askViaMessage() {
 	log.Printf("%sSenp message %v", LogInfo, m)
 	WaitMessageAnswers[client.Transaction] = client
 	comp.Out <- m
+}
+
+func SessionID() string {
+	var bytes = make([]byte, 8)
+	if _, err := rand.Read(bytes); err != nil {
+		panic(err)
+	}
+	for k, v := range bytes {
+		bytes[k] = dictionary[v%byte(len(dictionary))]
+	}
+	return string(bytes)
 }
