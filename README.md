@@ -9,9 +9,8 @@ Provide an HTTP anthentification over XMPP. Implementation of [XEP-0070](https:/
  * [go-xmpp](https://git.kingpenguin.tk/chteufleur/go-xmpp) for the XMPP part.
  * [cfg](https://github.com/jimlawless/cfg) for the configuration file.
 
-
-Download the CA at [https://kingpenguin.tk/ressources/cacert.pem](https://kingpenguin.tk/ressources/cacert.pem), then install it on your operating system.
-Once installed, go into your $GOPATH directory and go get the source code.
+You must first [install go environment](https://golang.org/doc/install) on your system.
+Then, go into your $GOPATH directory and go get the source code.
 ```sh
 go get git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP.git
 ```
