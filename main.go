@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	Version               = "v0.3"
+	Version               = "v0.3.1"
 	configurationFilePath = "httpAuth.cfg"
 
 	default_xmpp_server_address = "127.0.0.1"
@@ -69,24 +69,6 @@ func init() {
 	xmpp.Debug = mapConfig["xmpp_debug"] == "true"
 }
 
-func request() {
-	for {
-		client := new(xmpp.Client)
-
-		client.JID = getChanString(http.ChanRequest)
-		client.Method = getChanString(http.ChanRequest)
-		client.Domain = getChanString(http.ChanRequest)
-		client.Transaction = getChanString(http.ChanRequest)
-
-		chanResult := <-http.ChanRequest
-		if v, ok := chanResult.(chan string); ok {
-			client.ChanReply = v
-		}
-
-		go client.QueryClient()
-	}
-}
-
 func getChanString(c chan interface{}) string {
 	ret := ""
 	i := <-c
@@ -100,15 +82,12 @@ func main() {
 
 	go http.Run()
 	go xmpp.Run()
-	go request()
 
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, os.Interrupt)
 	signal.Notify(sigchan, syscall.SIGTERM)
 	signal.Notify(sigchan, os.Kill)
 	<-sigchan
-
-	// TODO close all ressources
 
 	log.Println("Exit main()")
 	time.Sleep(1 * time.Second)

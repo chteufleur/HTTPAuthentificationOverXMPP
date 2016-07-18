@@ -74,11 +74,13 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 
 	chanAnswer := make(chan string)
 
-	ChanRequest <- jid
-	ChanRequest <- method
-	ChanRequest <- domain
-	ChanRequest <- transaction
-	ChanRequest <- chanAnswer
+	client := new(xmpp.Client)
+	client.JID = jid
+	client.Method = method
+	client.Domain = domain
+	client.Transaction = transaction
+	client.ChanReply = chanAnswer
+	client.QueryClient()
 
 	select {
 	case answer := <-chanAnswer:
@@ -97,7 +99,16 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	case <-time.After(time.Duration(timeout) * time.Second):
 		w.WriteHeader(http.StatusUnauthorized)
-		delete(xmpp.WaitMessageAnswers, transaction)
+	}
+
+	switch client.TypeSend {
+	case xmpp.TYPE_SEND_IQ:
+		log.Printf("%sDelete IQ", LogDebug)
+		delete(xmpp.WaitIqMessages, client.IdMap)
+
+	case xmpp.TYPE_SEND_MESSAGE:
+		log.Printf("%sDelete Message", LogDebug)
+		delete(xmpp.WaitMessageAnswers, client.IdMap)
 	}
 }
 

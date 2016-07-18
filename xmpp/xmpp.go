@@ -55,7 +55,6 @@ func mainXMPP() {
 			confirm := v.Confir
 			if confirm != nil {
 				client := WaitMessageAnswers[confirm.Id]
-				delete(WaitMessageAnswers, confirm.Id)
 				processConfirm(v, client)
 			} else {
 				// If body is the confirmation id, it will be considerated as accepted.
@@ -63,7 +62,6 @@ func mainXMPP() {
 				client := WaitMessageAnswers[v.Body]
 				jidFrom, _ := xmpp.ParseJID(v.From)
 				if client != nil && client.JID == jidFrom.Bare() {
-					delete(WaitMessageAnswers, v.Body)
 					processConfirm(v, client)
 				}
 			}
@@ -88,13 +86,11 @@ func mainXMPP() {
 				confirm := &xmpp.Confirm{}
 				v.PayloadDecode(confirm)
 				client := WaitIqMessages[v.Id]
-				delete(WaitIqMessages, v.Id)
 				processConfirm(v, client)
 
 			default:
 				// Handle reply iq that doesn't contain HTTP-Auth namespace
 				client := WaitIqMessages[v.Id]
-				delete(WaitIqMessages, v.Id)
 				processConfirm(v, client)
 
 				if client == nil {
