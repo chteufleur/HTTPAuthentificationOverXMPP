@@ -51,6 +51,7 @@ GET /auth?jid=user%40host%2fresource&domain=example.org&method=POST&transaction_
 
 This will send a request to the given JID, then return HTTP code depending on what appended.
  * 200 : User accept the request
+ * 400 : One or more mandatory parameter(s) is missing
  * 401 : User deny the request
  * 504 : User do not provide an answer (timeout)
  * 520 : Unknown error append

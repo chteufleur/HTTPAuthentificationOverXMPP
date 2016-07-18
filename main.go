@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	Version               = "v0.2"
+	Version               = "v0.3"
 	configurationFilePath = "httpAuth.cfg"
 
 	default_xmpp_server_address = "127.0.0.1"
@@ -27,6 +27,8 @@ var (
 )
 
 func init() {
+	log.Printf("Running HTTP-Auth %v", Version)
+
 	err := cfg.Load(configurationFilePath, mapConfig)
 	if err != nil {
 		log.Fatal("Failed to load configuration file.", err)

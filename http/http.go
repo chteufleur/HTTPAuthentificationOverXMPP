@@ -53,10 +53,17 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	jid := strings.Join(r.Form[PARAM_JID], "")
 	method := strings.Join(r.Form[METHOD_ACCESS], "")
 	domain := strings.Join(r.Form[DOMAIN_ACCESS], "")
+
+	if jid == "" || method == "" || domain == "" {
+		// If mandatory params is missing
+		log.Printf("%sMandatory params is missing", LogInfo)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	transaction := strings.Join(r.Form[TRANSACTION_ID], "")
 	timeoutStr := strings.Join(r.Form[TIMEOUTE], "")
-	log.Printf("%sAuth %s", LogDebug, jid)
-
+	log.Printf("%sAuth %s", LogInfo, jid)
 	timeout, err := strconv.Atoi(timeoutStr)
 	if err != nil || timeout <= 0 {
 		timeout = TimeoutSec
