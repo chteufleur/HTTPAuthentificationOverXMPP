@@ -96,7 +96,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(StatusUnknownError)
 		}
 	case <-time.After(time.Duration(timeout) * time.Second):
-		w.WriteHeader(http.StatusGatewayTimeout)
+		w.WriteHeader(http.StatusUnauthorized)
 		delete(xmpp.WaitMessageAnswers, transaction)
 	}
 }
