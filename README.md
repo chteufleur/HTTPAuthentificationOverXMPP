@@ -16,7 +16,7 @@ go get git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP.git
 ```
 
 ### Configure
-Configure the gateway by editing the ``httpAuth.cfg`` file in order to give all XMPP component and HTTP server informations.
+Configure the gateway by editing the ``httpAuth.cfg`` file in order to give all XMPP component and HTTP server informations. An example of the config file can be found in [the repos](https://git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP/src/master/httpAuth.cfg).
 
 XMPP
  * xmpp_server_address : Component server address connection (default: 127.0.0.1)
@@ -31,6 +31,7 @@ HTTP
  * https_cert_path : Path to the certificate file (default: ./cert.pem)
  * https_key_path : Path to the key file (default: ./key.pem)
  * http_timeoute_sec : Define a timeout if user did not give an answer to the request (default: 60)
+
 
 ### Utilization
 To ask authorization, just send an HTTP request to the path ``/auth`` with parameters:
