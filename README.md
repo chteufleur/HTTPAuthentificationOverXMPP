@@ -16,7 +16,8 @@ go get git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP.git
 ```
 
 ### Configure
-Configure the gateway by editing the ``httpAuth.cfg`` file in order to give all XMPP component and HTTP server informations. An example of the config file can be found in [the repos](https://git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP/src/master/httpAuth.cfg).
+Configure the gateway by editing the ``httpAuth.cfg`` file in order to give all XMPP component and HTTP server informations.
+An example of the config file can be found in [the repos](https://git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP/src/master/httpAuth.cfg).
 
 XMPP
  * xmpp_server_address : Component server address connection (default: 127.0.0.1)
@@ -35,18 +36,32 @@ HTTP
 
 ### Utilization
 To ask authorization, just send an HTTP request to the path ``/auth`` with parameters:
- * jid : JID of the user (user@host/resource or user@host)
- * domain : Domain you want to access
- * method : Method you access the domain
+ * __jid__ : JID of the user (user@host/resource or user@host)
+ * __domain__ : Domain you want to access
+ * __method__ : Method you access the domain
  * transaction_id : Transaction identifier (auto generated if not provide)
  * timeout : Timeout of the request in second (default : 60, max : 300)
+
+__Bold parameters__ are mandatory.
 
 Example:
 ```
 GET /auth?jid=user%40host%2fresource&domain=example.org&method=POST&transaction_id=WhatEverYouWant&timeout=120 HTTP/1.1
 ```
 
-This will send a request to the given JID. If the user accept, the server will return HTTP code 200, otherwise it will return HTTP code 401.
+This will send a request to the given JID, then return HTTP code depending on what appended.
+ * 200 : User accept the request
+ * 401 : User deny the request
+ * 504 : User do not provide an answer (timeout)
+ * 520 : Unknown error append
+ * 523 : Server is unreachable
+
+
+If the provided JID contain a resource, it will try to send an ``iq`` stanza.
+If the answer to this ``iq`` is a ``feature-not-implemented`` or ``service-unavailable`` error,
+it will automatically send a ``message`` stanza. Unfortunately, if a ``message`` stanza is used,
+their is probably no way to get the error if the JID does not exist or is unreachable.
+
 
 A demo version can be found at [auth.xmpp.kingpenguin.tk](http://auth.xmpp.kingpenguin.tk) for test purpose only.
 

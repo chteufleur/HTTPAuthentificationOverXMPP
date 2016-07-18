@@ -27,6 +27,9 @@ const (
 
 	RETURN_VALUE_OK  = "OK"
 	RETURN_VALUE_NOK = "NOK"
+
+	StatusUnknownError = 520
+	StatusUnreachable  = 523
 )
 
 var (
@@ -62,7 +65,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 		timeout = MaxTimeout
 	}
 
-	chanAnswer := make(chan bool)
+	chanAnswer := make(chan string)
 
 	ChanRequest <- jid
 	ChanRequest <- method
@@ -72,13 +75,21 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 
 	select {
 	case answer := <-chanAnswer:
-		if answer {
+		switch answer {
+		case xmpp.REPLY_OK:
 			w.WriteHeader(http.StatusOK)
-		} else {
+
+		case xmpp.REPLY_DENY:
 			w.WriteHeader(http.StatusUnauthorized)
+
+		case xmpp.REPLY_UNREACHABLE:
+			w.WriteHeader(StatusUnreachable)
+
+		default:
+			w.WriteHeader(StatusUnknownError)
 		}
 	case <-time.After(time.Duration(timeout) * time.Second):
-		w.WriteHeader(http.StatusUnauthorized)
+		w.WriteHeader(http.StatusGatewayTimeout)
 		delete(xmpp.WaitMessageAnswers, transaction)
 	}
 }

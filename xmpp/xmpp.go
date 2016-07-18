@@ -116,17 +116,32 @@ func processConfirm(x interface{}, client *Client) {
 
 	if client != nil {
 		if mesOK && mes.Error != nil {
-			client.ChanReply <- false
+			// Message error
+			errCondition := mes.Error.Condition()
+			if errCondition == xmpp.ServiceUnavailable {
+				// unreachable
+				client.ChanReply <- REPLY_UNREACHABLE
+			} else {
+				client.ChanReply <- REPLY_DENY
+			}
+
 		} else if iqOK && iq.Error != nil {
-			if iq.Error.Condition().Local == "service-unavailable" {
+			// IQ error
+			errCondition := iq.Error.Condition()
+			if errCondition == xmpp.ServiceUnavailable || errCondition == xmpp.FeatureNotImplemented {
 				// send by message if client doesn't implemente it
 				client.JID = strings.SplitN(client.JID, "/", 2)[0]
 				go client.QueryClient()
+			} else if errCondition == xmpp.RemoteServerNotFound {
+				// unreachable
+				client.ChanReply <- REPLY_UNREACHABLE
 			} else {
-				client.ChanReply <- false
+				client.ChanReply <- REPLY_DENY
 			}
+
 		} else {
-			client.ChanReply <- true
+			// No error
+			client.ChanReply <- REPLY_OK
 		}
 	}
 }
