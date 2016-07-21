@@ -34,7 +34,7 @@ HTTP
  * http_timeoute_sec : Define a timeout if user did not give an answer to the request (default: 60)
 
 
-### Utilization
+### Usage
 To ask authorization, just send an HTTP request to the path ``/auth`` with parameters:
  * __jid__ : JID of the user (user@host/resource or user@host)
  * __domain__ : Domain you want to access

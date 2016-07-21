@@ -28,8 +28,8 @@ var (
 
 	ChanAction = make(chan string)
 
-	WaitMessageAnswers = make(map[string]*Client)
-	WaitIqMessages     = make(map[string]*Client)
+	WaitMessageAnswers = make(map[string]*Confirmation)
+	WaitIqMessages     = make(map[string]*Confirmation)
 
 	Debug = true
 )
@@ -54,15 +54,15 @@ func mainXMPP() {
 		case *xmpp.Message:
 			confirm := v.Confir
 			if confirm != nil {
-				client := WaitMessageAnswers[confirm.Id]
-				processConfirm(v, client)
+				confirmation := WaitMessageAnswers[confirm.Id]
+				processConfirm(v, confirmation)
 			} else {
 				// If body is the confirmation id, it will be considerated as accepted.
-				// In order to be compatible with all clients.
-				client := WaitMessageAnswers[v.Body]
+				// In order to be compatible with all confirmations.
+				confirmation := WaitMessageAnswers[v.Body]
 				jidFrom, _ := xmpp.ParseJID(v.From)
-				if client != nil && client.JID == jidFrom.Bare() {
-					processConfirm(v, client)
+				if confirmation != nil && confirmation.JID == jidFrom.Bare() {
+					processConfirm(v, confirmation)
 				}
 			}
 
@@ -85,15 +85,15 @@ func mainXMPP() {
 			case xmpp.NSHTTPAuth:
 				confirm := &xmpp.Confirm{}
 				v.PayloadDecode(confirm)
-				client := WaitIqMessages[v.Id]
-				processConfirm(v, client)
+				confirmation := WaitIqMessages[v.Id]
+				processConfirm(v, confirmation)
 
 			default:
 				// Handle reply iq that doesn't contain HTTP-Auth namespace
-				client := WaitIqMessages[v.Id]
-				processConfirm(v, client)
+				confirmation := WaitIqMessages[v.Id]
+				processConfirm(v, confirmation)
 
-				if client == nil {
+				if confirmation == nil {
 					reply := v.Response(xmpp.IQTypeError)
 					reply.PayloadEncode(xmpp.NewError("cancel", xmpp.FeatureNotImplemented, ""))
 					comp.Out <- reply
@@ -106,19 +106,19 @@ func mainXMPP() {
 	}
 }
 
-func processConfirm(x interface{}, client *Client) {
+func processConfirm(x interface{}, confirmation *Confirmation) {
 	mes, mesOK := x.(*xmpp.Message)
 	iq, iqOK := x.(*xmpp.Iq)
 
-	if client != nil {
+	if confirmation != nil {
 		if mesOK && mes.Error != nil {
 			// Message error
 			errCondition := mes.Error.Condition()
 			if errCondition == xmpp.ServiceUnavailable {
 				// unreachable
-				client.ChanReply <- REPLY_UNREACHABLE
+				confirmation.ChanReply <- REPLY_UNREACHABLE
 			} else {
-				client.ChanReply <- REPLY_DENY
+				confirmation.ChanReply <- REPLY_DENY
 			}
 
 		} else if iqOK && iq.Error != nil {
@@ -126,18 +126,18 @@ func processConfirm(x interface{}, client *Client) {
 			errCondition := iq.Error.Condition()
 			if errCondition == xmpp.ServiceUnavailable || errCondition == xmpp.FeatureNotImplemented {
 				// send by message if client doesn't implemente it
-				client.JID = strings.SplitN(client.JID, "/", 2)[0]
-				go client.QueryClient()
+				confirmation.JID = strings.SplitN(confirmation.JID, "/", 2)[0]
+				go confirmation.SendConfirmation()
 			} else if errCondition == xmpp.RemoteServerNotFound {
 				// unreachable
-				client.ChanReply <- REPLY_UNREACHABLE
+				confirmation.ChanReply <- REPLY_UNREACHABLE
 			} else {
-				client.ChanReply <- REPLY_DENY
+				confirmation.ChanReply <- REPLY_DENY
 			}
 
 		} else {
 			// No error
-			client.ChanReply <- REPLY_OK
+			confirmation.ChanReply <- REPLY_OK
 		}
 	}
 }
