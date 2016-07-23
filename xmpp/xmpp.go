@@ -11,11 +11,14 @@ const (
 	LogInfo  = "\t[XMPP INFO]\t"
 	LogError = "\t[XMPP ERROR]\t"
 	LogDebug = "\t[XMPP DEBUG]\t"
+
+	DEFAULT_SERVER_ADDRESS = "127.0.0.1"
+	DEFAULT_SERVER_PORT    = "5347"
 )
 
 var (
-	Addr   = "127.0.0.1"
-	Port   = "5347"
+	Addr   = ""
+	Port   = ""
 	JidStr = ""
 	Secret = ""
 
@@ -46,11 +49,24 @@ func Run() {
 
 	if isComponent {
 		// component
+		if Addr == "" {
+			Addr = DEFAULT_SERVER_ADDRESS
+		}
+		if Port == "" {
+			Port = DEFAULT_SERVER_PORT
+		}
 		addr = Addr + ":" + Port
 	} else {
 		// client
-		addrs := must(xmpp.HomeServerAddrs(jid)).([]string)
-		addr = addrs[0]
+		if Addr == "" {
+			addrs := must(xmpp.HomeServerAddrs(jid)).([]string)
+			addr = addrs[0]
+		} else {
+			if Port == "" {
+				Port = DEFAULT_SERVER_PORT
+			}
+			addr = Addr + ":" + Port
+		}
 	}
 
 	log.Printf("%sConnecting to %s", LogInfo, addr)

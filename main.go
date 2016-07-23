@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	Version               = "v0.3.1"
+	Version               = "v0.4"
 	configurationFilePath = "httpAuth.cfg"
 )
 
@@ -60,18 +60,9 @@ func init() {
 		xmpp.Port = xmpp_server_port
 	}
 
-	xmpp.JidStr = mapConfig["xmpp_hostname"]
+	xmpp.JidStr = mapConfig["xmpp_jid"]
 	xmpp.Secret = mapConfig["xmpp_secret"]
 	xmpp.Debug = mapConfig["xmpp_debug"] == "true"
-}
-
-func getChanString(c chan interface{}) string {
-	ret := ""
-	i := <-c
-	if v, ok := i.(string); ok {
-		ret = v
-	}
-	return ret
 }
 
 func main() {

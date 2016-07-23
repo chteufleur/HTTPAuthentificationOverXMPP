@@ -2,6 +2,8 @@
 
 Provide an HTTP anthentification over XMPP. Implementation of [XEP-0070](https://xmpp.org/extensions/xep-0070.html).
 
+Can be run as a XMPP client or XMPP component.
+
 
 ## Compilation
 ### Dependencies
@@ -16,14 +18,14 @@ go get git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP.git
 ```
 
 ### Configure
-Configure the gateway by editing the ``httpAuth.cfg`` file in order to give all XMPP component and HTTP server informations.
+Configure the gateway by editing the ``httpAuth.cfg`` file in order to give all XMPP and HTTP server informations.
 An example of the config file can be found in [the repos](https://git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP/src/master/httpAuth.cfg).
 
 XMPP
  * xmpp_server_address : Component server address connection (default: 127.0.0.1)
  * xmpp_server_port : Component server port connection (default: 5347)
- * xmpp_hostname : Component hostname
- * xmpp_secret : Component password
+ * __xmpp_jid__ : Account JID
+ * __xmpp_secret__ : Account password
  * xmpp_debug : Enable debug log at true (default: false)
 
 HTTP
@@ -33,6 +35,7 @@ HTTP
  * https_key_path : Path to the key file (default: ./key.pem)
  * http_timeoute_sec : Define a timeout if user did not give an answer to the request (default: 60)
 
+__Bold config__ are mandatory.
 
 ### Usage
 To ask authorization, just send an HTTP request to the path ``/auth`` with parameters:
