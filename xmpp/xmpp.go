@@ -8,13 +8,14 @@ import (
 )
 
 const (
-	LogInfo  = "\t[XMPP COMPONENT INFO]\t"
-	LogError = "\t[XMPP COMPONENT ERROR]\t"
-	LogDebug = "\t[XMPP COMPONENT DEBUG]\t"
+	LogInfo  = "\t[XMPP INFO]\t"
+	LogError = "\t[XMPP ERROR]\t"
+	LogDebug = "\t[XMPP DEBUG]\t"
 )
 
 var (
-	Addr   = "127.0.0.1:5347"
+	Addr   = "127.0.0.1"
+	Port   = "5347"
 	JidStr = ""
 	Secret = ""
 
@@ -35,11 +36,32 @@ var (
 )
 
 func Run() {
+	var addr string
+	var isComponent bool
+
 	log.Printf("%sRunning", LogInfo)
 	// Create stream and configure it as a component connection.
 	jid = must(xmpp.ParseJID(JidStr)).(xmpp.JID)
-	stream = must(xmpp.NewStream(Addr, &xmpp.StreamConfig{LogStanzas: Debug})).(*xmpp.Stream)
-	comp = must(xmpp.NewComponentXMPP(stream, jid, Secret)).(*xmpp.XMPP)
+	isComponent = jid.Node == ""
+
+	if isComponent {
+		// component
+		addr = Addr + ":" + Port
+	} else {
+		// client
+		addrs := must(xmpp.HomeServerAddrs(jid)).([]string)
+		addr = addrs[0]
+	}
+
+	log.Printf("%sConnecting to %s", LogInfo, addr)
+	stream = must(xmpp.NewStream(addr, &xmpp.StreamConfig{LogStanzas: Debug})).(*xmpp.Stream)
+
+	if isComponent {
+		comp = must(xmpp.NewComponentXMPP(stream, jid, Secret)).(*xmpp.XMPP)
+	} else {
+		comp = must(xmpp.NewClientXMPP(stream, jid, Secret, &xmpp.ClientConfig{InsecureSkipVerify: false})).(*xmpp.XMPP)
+		comp.Out <- xmpp.Presence{}
+	}
 
 	mainXMPP()
 	log.Printf("%sReach main method's end", LogInfo)
