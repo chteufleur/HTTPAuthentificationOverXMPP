@@ -5,17 +5,23 @@ Provide an HTTP anthentification over XMPP. Implementation of [XEP-0070](https:/
 Can be run as a XMPP client or XMPP component.
 
 
-## Compilation
 ### Dependencies
 
  * [go-xmpp](https://git.kingpenguin.tk/chteufleur/go-xmpp) for the XMPP part.
  * [cfg](https://github.com/jimlawless/cfg) for the configuration file.
+
+### Build and run
 
 You must first [install go environment](https://golang.org/doc/install) on your system.
 Then, go into your $GOPATH directory and go get the source code.
 ```sh
 go get git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP.git
 ```
+
+First, you need to go into directory ``$GOPATH/src/chteufleur/HTTPAuthentificationOverXMPP.git``.
+Then, you can run the project directly by using command ``go run main.go``.
+Or, in order to build the project you can run the command ``go build main.go``.
+It will generate a binary that you can run as any binary file.
 
 ### Configure
 Configure the gateway by editing the ``httpAuth.cfg`` file in order to give all XMPP and HTTP server informations.
