@@ -32,7 +32,7 @@ func init() {
 	}
 
 	// HTTP config
-	httpTimeout, err := strconv.Atoi(mapConfig["http_timeoute_sec"])
+	httpTimeout, err := strconv.Atoi(mapConfig["http_timeout_sec"])
 	if err == nil && httpTimeout > 0 && httpTimeout < http.MaxTimeout {
 		log.Println("Define HTTP timeout to " + strconv.Itoa(httpTimeout) + " second")
 		http.TimeoutSec = httpTimeout
