@@ -71,7 +71,7 @@ func Run() {
 	}
 
 	log.Printf("%sConnecting to %s", LogInfo, addr)
-	stream = must(xmpp.NewStream(addr, &xmpp.StreamConfig{LogStanzas: Debug})).(*xmpp.Stream)
+	stream = must(xmpp.NewStream(addr, &xmpp.StreamConfig{LogStanzas: Debug, ConnectionDomain: jid.Domain})).(*xmpp.Stream)
 
 	if isComponent {
 		comp = must(xmpp.NewComponentXMPP(stream, jid, Secret)).(*xmpp.XMPP)
