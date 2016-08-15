@@ -63,6 +63,7 @@ func init() {
 	xmpp.JidStr = mapConfig["xmpp_jid"]
 	xmpp.Secret = mapConfig["xmpp_secret"]
 	xmpp.Debug = mapConfig["xmpp_debug"] == "true"
+	xmpp.VerifyCertValidity = mapConfig["xmpp_verify_cert_validity"] != "false" // Default TRUE
 }
 
 func main() {

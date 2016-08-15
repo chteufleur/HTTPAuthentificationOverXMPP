@@ -35,7 +35,8 @@ var (
 	WaitMessageAnswers = make(map[string]*Confirmation)
 	WaitIqMessages     = make(map[string]*Confirmation)
 
-	Debug = true
+	Debug              = true
+	VerifyCertValidity = true
 )
 
 func Run() {
@@ -75,7 +76,7 @@ func Run() {
 	if isComponent {
 		comp = must(xmpp.NewComponentXMPP(stream, jid, Secret)).(*xmpp.XMPP)
 	} else {
-		comp = must(xmpp.NewClientXMPP(stream, jid, Secret, &xmpp.ClientConfig{InsecureSkipVerify: false})).(*xmpp.XMPP)
+		comp = must(xmpp.NewClientXMPP(stream, jid, Secret, &xmpp.ClientConfig{InsecureSkipVerify: !VerifyCertValidity})).(*xmpp.XMPP)
 		comp.Out <- xmpp.Presence{}
 	}
 

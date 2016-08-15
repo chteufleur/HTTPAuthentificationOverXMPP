@@ -33,6 +33,7 @@ XMPP
  * __xmpp_jid__ : Account JID
  * __xmpp_secret__ : Account password
  * xmpp_debug : Enable debug log at true (default: false)
+ * xmpp_verify_cert_validity : Enable certificate verification (default: true)
 
 HTTP
  * http_port : HTTP port to bind (default: 9090, desactive: -1)
