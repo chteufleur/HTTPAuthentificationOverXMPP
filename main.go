@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	Version               = "v0.4"
+	Version               = "v0.5-dev"
 	configurationFilePath = "httpAuth.cfg"
 )
 
