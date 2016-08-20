@@ -5,6 +5,7 @@ import (
 
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
@@ -28,13 +29,15 @@ const (
 	RETURN_VALUE_OK  = "OK"
 	RETURN_VALUE_NOK = "NOK"
 
+	MAX_PORT_VAL = 65535
+
 	StatusUnknownError = 520
 	StatusUnreachable  = 523
 )
 
 var (
-	HttpPortBind  = 9090
-	HttpsPortBind = 9093
+	HttpPortBind  = -1
+	HttpsPortBind = -1
 	CertPath      = "./cert.pem"
 	KeyPath       = "./key.pem"
 
@@ -43,8 +46,11 @@ var (
 	MaxTimeout  = 300 // 5 min
 )
 
+func init() {
+	rand.Seed(time.Now().UTC().UnixNano())
+}
+
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO
 	fmt.Fprintf(w, "Welcome to HTTP authentification over XMPP")
 }
 
@@ -120,8 +126,14 @@ func Run() {
 
 	if HttpPortBind > 0 {
 		go runHttp()
+	} else if HttpPortBind == 0 {
+		HttpPortBind = rand.Intn(MAX_PORT_VAL)
+		go runHttp()
 	}
 	if HttpsPortBind > 0 {
+		go runHttps()
+	} else if HttpsPortBind == 0 {
+		HttpsPortBind = rand.Intn(MAX_PORT_VAL)
 		go runHttps()
 	}
 }
