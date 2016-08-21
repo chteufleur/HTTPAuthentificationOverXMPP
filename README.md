@@ -41,8 +41,12 @@ HTTP
  * https_cert_path : Path to the certificate file (default: ./cert.pem)
  * https_key_path : Path to the key file (default: ./key.pem)
  * http_timeout_sec : Define a timeout if user did not give an answer to the request (default: 60)
+ * http_bind_address_ipv4 : Bind address on IPv4 (default: 127.0.0.1)
+ * http_bind_address_ipv6 : Bind address on IPv6 (default: [::1])
 
 __Bold config__ are mandatory.
+
+If ``http_bind_address_ipv4`` is set to ``0.0.0.0``, it will bind all address on IPv4 __AND__ IPv6.
 
 ### Usage
 To ask authorization, just send an HTTP request to the path ``/auth`` with parameters:

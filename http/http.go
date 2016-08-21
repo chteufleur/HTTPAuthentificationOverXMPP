@@ -44,6 +44,9 @@ var (
 	ChanRequest = make(chan interface{}, 5)
 	TimeoutSec  = 60  // 1 min
 	MaxTimeout  = 300 // 5 min
+
+	BindAddressIPv4 = "127.0.0.1"
+	BindAddressIPv6 = "[::1]"
 )
 
 func init() {
@@ -125,32 +128,44 @@ func Run() {
 	http.HandleFunc(ROUTE_AUTH, authHandler)
 
 	if HttpPortBind > 0 {
-		go runHttp()
+		go runHttp(BindAddressIPv4)
+		if BindAddressIPv4 != "0.0.0.0" {
+			go runHttp(BindAddressIPv6)
+		}
 	} else if HttpPortBind == 0 {
 		HttpPortBind = rand.Intn(MAX_PORT_VAL)
-		go runHttp()
+		go runHttp(BindAddressIPv4)
+		if BindAddressIPv4 != "0.0.0.0" {
+			go runHttp(BindAddressIPv6)
+		}
 	}
 	if HttpsPortBind > 0 {
-		go runHttps()
+		go runHttps(BindAddressIPv4)
+		if BindAddressIPv6 != "0.0.0.0" {
+			go runHttps(BindAddressIPv6)
+		}
 	} else if HttpsPortBind == 0 {
 		HttpsPortBind = rand.Intn(MAX_PORT_VAL)
-		go runHttps()
+		go runHttps(BindAddressIPv4)
+		if BindAddressIPv6 != "0.0.0.0" {
+			go runHttps(BindAddressIPv6)
+		}
 	}
 }
 
-func runHttp() {
+func runHttp(bindAddress string) {
 	port := strconv.Itoa(HttpPortBind)
-	log.Printf("%sHTTP listenning on port %s", LogInfo, port)
-	err := http.ListenAndServe(":"+port, nil)
+	log.Printf("%sHTTP listenning on %s:%s", LogInfo, bindAddress, port)
+	err := http.ListenAndServe(bindAddress+":"+port, nil)
 	if err != nil {
 		log.Fatal("%sListenAndServe: ", LogError, err)
 	}
 }
 
-func runHttps() {
+func runHttps(bindAddress string) {
 	port := strconv.Itoa(HttpsPortBind)
-	log.Printf("%sHTTPS listenning on port %s", LogInfo, port)
-	err := http.ListenAndServeTLS(":"+port, CertPath, KeyPath, nil)
+	log.Printf("%sHTTPS listenning on %s:%s", LogInfo, bindAddress, port)
+	err := http.ListenAndServeTLS(bindAddress+":"+port, CertPath, KeyPath, nil)
 	if err != nil {
 		log.Fatal("%sListenAndServe: ", LogError, err)
 	}
