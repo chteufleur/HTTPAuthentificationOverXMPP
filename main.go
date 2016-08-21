@@ -49,6 +49,14 @@ func init() {
 		http.CertPath = mapConfig["https_cert_path"]
 		http.KeyPath = mapConfig["https_key_path"]
 	}
+	bindAddressIPv4 := mapConfig["http_bind_address_ipv4"]
+	if bindAddressIPv4 != "" {
+		http.BindAddressIPv4 = bindAddressIPv4
+	}
+	bindAddressIPv6 := mapConfig["http_bind_address_ipv6"]
+	if bindAddressIPv6 != "" {
+		http.BindAddressIPv6 = bindAddressIPv6
+	}
 
 	// XMPP config
 	xmpp_server_address := mapConfig["xmpp_server_address"]
