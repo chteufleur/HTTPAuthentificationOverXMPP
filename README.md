@@ -36,8 +36,8 @@ XMPP
  * xmpp_verify_cert_validity : Enable certificate verification (default: true)
 
 HTTP
- * http_port : HTTP port to bind (default: 9090, desactive: -1)
- * https_port : HTTPS port to bind (default: 9093, desactive: -1)
+ * http_port : HTTP port to bind (default: -1, desactive: -1)
+ * https_port : HTTPS port to bind (default: -1, desactive: -1)
  * https_cert_path : Path to the certificate file (default: ./cert.pem)
  * https_key_path : Path to the key file (default: ./key.pem)
  * http_timeout_sec : Define a timeout if user did not give an answer to the request (default: 60)
