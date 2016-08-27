@@ -60,7 +60,7 @@ __Bold parameters__ are mandatory.
 
 Example:
 ```
-GET /auth?jid=user%40host%2fresource&domain=example.org&method=POST&transaction_id=WhatEverYouWant&timeout=120 HTTP/1.1
+GET /auth?jid=user%40host%2fresource;domain=example.org;method=POST;transaction_id=WhatEverYouWant;timeout=120 HTTP/1.1
 ```
 
 This will send a request to the given JID, then return HTTP code depending on what appended.
