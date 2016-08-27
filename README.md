@@ -53,7 +53,7 @@ To ask authorization, just send an HTTP request to the path ``/auth`` with param
  * __jid__ : JID of the user (user@host/resource or user@host)
  * __domain__ : Domain you want to access
  * __method__ : Method you access the domain
- * transaction_id : Transaction identifier (auto generated if not provide)
+ * __transaction_id__ : Transaction identifier (auto generated if not provide)
  * timeout : Timeout of the request in second (default : 60, max : 300)
 
 __Bold parameters__ are mandatory.

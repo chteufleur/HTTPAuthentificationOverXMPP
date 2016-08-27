@@ -62,15 +62,15 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	jid := strings.Join(r.Form[PARAM_JID], "")
 	method := strings.Join(r.Form[METHOD_ACCESS], "")
 	domain := strings.Join(r.Form[DOMAIN_ACCESS], "")
+	transaction := strings.Join(r.Form[TRANSACTION_ID], "")
 
-	if jid == "" || method == "" || domain == "" {
+	if jid == "" || method == "" || domain == "" || transaction == "" {
 		// If mandatory params is missing
 		log.Printf("%sMandatory params is missing", LogInfo)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	transaction := strings.Join(r.Form[TRANSACTION_ID], "")
 	timeoutStr := strings.Join(r.Form[TIMEOUTE], "")
 	log.Printf("%sAuth %s", LogInfo, jid)
 	timeout, err := strconv.Atoi(timeoutStr)
