@@ -37,6 +37,8 @@ var (
 
 	Debug              = true
 	VerifyCertValidity = true
+
+	identity = &xmpp.DiscoIdentity{Category: "client", Type: "bot", Name: "HTTP authentication over XMPP"}
 )
 
 func Run() {
@@ -107,8 +109,11 @@ func mainXMPP() {
 
 		case *xmpp.Iq:
 			switch v.PayloadName().Space {
+			case xmpp.NSDiscoInfo:
+				execDisco(v)
+
 			case xmpp.NSDiscoItems:
-				execDiscoCommand(v)
+				execDisco(v)
 
 			case xmpp.NSVCardTemp:
 				reply := v.Response(xmpp.IQTypeResult)
@@ -188,8 +193,37 @@ func must(v interface{}, err error) interface{} {
 	return v
 }
 
+func execDisco(iq *xmpp.Iq) {
+	log.Printf("%sDisco Feature", LogInfo)
+
+	discoInfoReceived := &xmpp.DiscoItems{}
+	iq.PayloadDecode(discoInfoReceived)
+
+	switch iq.PayloadName().Space {
+	case xmpp.NSDiscoInfo:
+		reply := iq.Response(xmpp.IQTypeResult)
+
+		discoInfo := &xmpp.DiscoInfo{}
+		discoInfo.Identity = append(discoInfo.Identity, *identity)
+		//discoInfo.Feature = append(discoInfo.Feature, xmpp.DiscoFeature{Var: xmpp.NSHTTPAuth})
+
+		reply.PayloadEncode(discoInfo)
+		comp.Out <- reply
+
+	case xmpp.NSDiscoItems:
+		if discoInfoReceived.Node == xmpp.NodeAdHocCommand {
+			execDiscoCommand(iq)
+		} else {
+			reply := iq.Response(xmpp.IQTypeResult)
+			discoItems := &xmpp.DiscoItems{}
+			reply.PayloadEncode(discoItems)
+			comp.Out <- reply
+		}
+	}
+}
+
 func execDiscoCommand(iq *xmpp.Iq) {
-	log.Printf("%sDiscovery item iq received", LogInfo)
+	log.Printf("%sAd-Hoc Command", LogInfo)
 	reply := iq.Response(xmpp.IQTypeResult)
 	discoItem := &xmpp.DiscoItems{Node: xmpp.NodeAdHocCommand}
 	reply.PayloadEncode(discoItem)
