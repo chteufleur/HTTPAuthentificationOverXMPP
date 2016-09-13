@@ -205,7 +205,8 @@ func execDisco(iq *xmpp.Iq) {
 
 		discoInfo := &xmpp.DiscoInfo{}
 		discoInfo.Identity = append(discoInfo.Identity, *identity)
-		//discoInfo.Feature = append(discoInfo.Feature, xmpp.DiscoFeature{Var: xmpp.NSHTTPAuth})
+		discoInfo.Feature = append(discoInfo.Feature, xmpp.DiscoFeature{Var: xmpp.NSDiscoInfo})
+		discoInfo.Feature = append(discoInfo.Feature, xmpp.DiscoFeature{Var: xmpp.NSDiscoItems})
 
 		reply.PayloadEncode(discoInfo)
 		comp.Out <- reply
