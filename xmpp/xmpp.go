@@ -139,7 +139,7 @@ func mainXMPP() {
 
 				if confirmation == nil {
 					reply := v.Response(xmpp.IQTypeError)
-					reply.PayloadEncode(xmpp.NewError("cancel", xmpp.FeatureNotImplemented, ""))
+					reply.PayloadEncode(xmpp.NewError("cancel", xmpp.ErrorFeatureNotImplemented, ""))
 					comp.Out <- reply
 				}
 			}
@@ -158,7 +158,7 @@ func processConfirm(x interface{}, confirmation *Confirmation) {
 		if mesOK && mes.Error != nil {
 			// Message error
 			errCondition := mes.Error.Condition()
-			if errCondition == xmpp.ServiceUnavailable {
+			if errCondition == xmpp.ErrorServiceUnavailable {
 				// unreachable
 				confirmation.ChanReply <- REPLY_UNREACHABLE
 			} else {
@@ -168,11 +168,11 @@ func processConfirm(x interface{}, confirmation *Confirmation) {
 		} else if iqOK && iq.Error != nil {
 			// IQ error
 			errCondition := iq.Error.Condition()
-			if errCondition == xmpp.ServiceUnavailable || errCondition == xmpp.FeatureNotImplemented {
+			if errCondition == xmpp.ErrorServiceUnavailable || errCondition == xmpp.ErrorFeatureNotImplemented {
 				// send by message if client doesn't implemente it
 				confirmation.JID = strings.SplitN(confirmation.JID, "/", 2)[0]
 				go confirmation.SendConfirmation()
-			} else if errCondition == xmpp.RemoteServerNotFound {
+			} else if errCondition == xmpp.ErrorRemoteServerNotFound {
 				// unreachable
 				confirmation.ChanReply <- REPLY_UNREACHABLE
 			} else {
