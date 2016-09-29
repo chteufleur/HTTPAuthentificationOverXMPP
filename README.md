@@ -24,8 +24,8 @@ Or, in order to build the project you can run the command ``go build main.go``.
 It will generate a binary that you can run as any binary file.
 
 ### Configure
-Configure the gateway by editing the ``httpAuth.cfg`` file in order to give all XMPP and HTTP server informations.
-An example of the config file can be found in [the repos](https://git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP/src/master/httpAuth.cfg).
+Configure the gateway by editing the ``httpAuth.conf`` file in order to give all XMPP and HTTP server informations. This configuration file has to be placed following the [XDG specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html).
+An example of the config file can be found in [the repos](https://git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP/src/master/httpAuth.conf).
 
 XMPP
  * xmpp_server_address : Component server address connection (default: 127.0.0.1)

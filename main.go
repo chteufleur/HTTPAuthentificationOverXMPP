@@ -10,13 +10,16 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 )
 
 const (
 	Version               = "v0.5-dev"
-	configurationFilePath = "httpAuth.cfg"
+	configurationFilePath = "httpAuth.conf"
+	PathConfEnvVariable   = "XDG_CONFIG_DIRS"
+	DefaultXdgConfigDirs  = "/etc/xdg"
 )
 
 var (
@@ -26,9 +29,8 @@ var (
 func init() {
 	log.Printf("Running HTTP-Auth %v", Version)
 
-	err := cfg.Load(configurationFilePath, mapConfig)
-	if err != nil {
-		log.Fatal("Failed to load configuration file.", err)
+	if !loadConfigFile() {
+		log.Fatal("Failed to load configuration file.")
 	}
 
 	// HTTP config
@@ -72,6 +74,28 @@ func init() {
 	xmpp.Secret = mapConfig["xmpp_secret"]
 	xmpp.Debug = mapConfig["xmpp_debug"] == "true"
 	xmpp.VerifyCertValidity = mapConfig["xmpp_verify_cert_validity"] != "false" // Default TRUE
+}
+
+func loadConfigFile() bool {
+	ret := false
+	envVariable := os.Getenv(PathConfEnvVariable)
+	if envVariable == "" {
+		envVariable = DefaultXdgConfigDirs
+	}
+	for _, path := range strings.Split(envVariable, ":") {
+		log.Println("Try to find configuration file into " + path)
+		configFile := path + "/" + configurationFilePath
+		if _, err := os.Stat(configFile); err == nil {
+			// The config file exist
+			if cfg.Load(configFile, mapConfig) == nil {
+				// And has been loaded succesfully
+				log.Println("Find configuration file at " + configFile)
+				ret = true
+				break
+			}
+		}
+	}
+	return ret
 }
 
 func main() {
