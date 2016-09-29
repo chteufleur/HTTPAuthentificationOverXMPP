@@ -17,7 +17,7 @@ import (
 
 const (
 	Version               = "v0.5-dev"
-	configurationFilePath = "httpAuth.conf"
+	configurationFilePath = "http-auth/httpAuth.conf"
 	PathConfEnvVariable   = "XDG_CONFIG_DIRS"
 	DefaultXdgConfigDirs  = "/etc/xdg"
 )
