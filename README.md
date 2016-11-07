@@ -1,6 +1,6 @@
-# HTTPAuthentificationOverXMPP
+# HTTPAuthenticationOverXMPP
 
-Provide an HTTP anthentification over XMPP. Implementation of [XEP-0070](https://xmpp.org/extensions/xep-0070.html).
+Provide an HTTP authentication over XMPP. Implementation of [XEP-0070](https://xmpp.org/extensions/xep-0070.html).
 
 Can be run as a XMPP client or XMPP component.
 
