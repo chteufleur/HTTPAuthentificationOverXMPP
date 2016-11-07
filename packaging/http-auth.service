@@ -1,0 +1,9 @@
+[Unit]
+Description=Provide an HTTP authentication over XMPP (https://xmpp.org/extensions/xep-0070.html)
+
+[Service]
+ExecStart=/etc/init.d/http-auth.sh start
+ExecStop=/etc/init.d/http-auth.sh stop
+
+[Install]
+WantedBy=multi-user.target
