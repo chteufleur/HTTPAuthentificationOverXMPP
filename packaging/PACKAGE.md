@@ -36,5 +36,5 @@ An example can be found [here](https://github.com/jbuberel/buildmodeshared/tree/
 
 ## Configuration
 
-At the installation, the folder ``$XDG_CONFIG_DIRS/http-auth/`` need to be created (example ``/etc/xdg/http-auth``) where to place the configuration file named ``httpAuth.conf``.
+At the installation, the folder ``$XDG_CONFIG_DIRS/http-auth/`` need to be created (example ``/etc/xdg/http-auth``) where to place the configuration file named ``httpAuth.conf`` and the file lang configuration named ``messages.lang``.
 

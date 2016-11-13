@@ -1,0 +1,2 @@
+en=_DOMAIN_ (with method _METHOD_) need to validate your identity, do you agree ?\nValidation code : _VALIDE_CODE_\nPlease check that this code is the same as on _DOMAIN_.\n\nIf your client doesn't support that functionnality, please send back the validation code to confirm the request.
+fr=_DOMAIN_ (avec la methode _METHOD_) a besoin de valider votre identitée, acceptez-vous ?\nVeuillez vérifier que ce code est le même que sur _DOMAIN_.\n\nSi votre client ne support pas cette fonctionnalitée, veuilez renvoyer le code de validation pour confirmer la requête.
