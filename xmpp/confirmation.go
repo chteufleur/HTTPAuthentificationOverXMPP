@@ -5,6 +5,7 @@ import (
 
 	"log"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -14,6 +15,15 @@ const (
 
 	TYPE_SEND_MESSAGE = "type_send_message"
 	TYPE_SEND_IQ      = "type_send_iq"
+
+	TEMPLATE_DOMAIN          = "_DOMAIN_"
+	TEMPLATE_METHOD          = "_METHOD_"
+	TEMPLATE_VALIDATION_CODE = "_VALIDE_CODE_"
+	DEFAULT_MESSAGE          = "_DOMAIN_ (with method _METHOD_) need to validate your identity, do you agree ?\nValidation code : _VALIDE_CODE_\nPlease check that this code is the same as on _DOMAIN_.\n\nIf your client doesn't support that functionnality, please send back the validation code to confirm the request."
+)
+
+var (
+	MapLangs = make(map[string]string)
 )
 
 type Confirmation struct {
@@ -53,12 +63,8 @@ func (confirmation *Confirmation) askViaIQ() {
 
 func (confirmation *Confirmation) askViaMessage() {
 	m := xmpp.Message{From: jid.Full(), To: confirmation.JID, Type: xmpp.MessageTypeNormal}
-
 	m.Thread = xmpp.SessionID()
-	m.Body = confirmation.Domain + " (with method " + confirmation.Method + ") need to validate your identity, do you agree ?"
-	m.Body += "\nValidation code : " + confirmation.Transaction
-	m.Body += "\nPlease check that this code is the same as on " + confirmation.Domain
-	m.Body += "\n\nIf your client doesn't support that functionnality, please send back the validation code to confirm the request."
+	confirmation.setBodies(&m)
 	m.Confir = &xmpp.Confirm{Id: confirmation.Transaction, Method: confirmation.Method, URL: confirmation.Domain}
 
 	log.Printf("%sSend message %v", LogInfo, m)
@@ -67,4 +73,25 @@ func (confirmation *Confirmation) askViaMessage() {
 
 	confirmation.TypeSend = TYPE_SEND_MESSAGE
 	confirmation.IdMap = confirmation.Transaction
+}
+
+func (confirmation *Confirmation) setBodies(message *xmpp.Message) {
+	msg := DEFAULT_MESSAGE
+	if len(MapLangs) == 0 {
+		msg = strings.Replace(msg, TEMPLATE_DOMAIN, confirmation.Domain, -1)
+		msg = strings.Replace(msg, TEMPLATE_METHOD, confirmation.Method, -1)
+		msg = strings.Replace(msg, TEMPLATE_VALIDATION_CODE, confirmation.Transaction, -1)
+		message.Body = append(message.Body, xmpp.MessageBody{Lang: "en", Value: msg})
+	} else {
+		for key, val := range MapLangs {
+			msg = val
+			msg = strings.Replace(msg, TEMPLATE_DOMAIN, confirmation.Domain, -1)
+			msg = strings.Replace(msg, TEMPLATE_METHOD, confirmation.Method, -1)
+			msg = strings.Replace(msg, TEMPLATE_VALIDATION_CODE, confirmation.Transaction, -1)
+			msg = strings.Replace(msg, "\\n", "\n", -1)
+			msg = strings.Replace(msg, "\\r", "\r", -1)
+			msg = strings.Replace(msg, "\\t", "\t", -1)
+			message.Body = append(message.Body, xmpp.MessageBody{Lang: key, Value: msg})
+		}
+	}
 }

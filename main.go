@@ -18,6 +18,7 @@ import (
 const (
 	Version               = "v0.5-dev"
 	configurationFilePath = "http-auth/httpAuth.conf"
+	langFilePath          = "http-auth/messages.lang"
 	PathConfEnvVariable   = "XDG_CONFIG_DIRS"
 	DefaultXdgConfigDirs  = "/etc/xdg"
 )
@@ -32,6 +33,7 @@ func init() {
 	if !loadConfigFile() {
 		log.Fatal("Failed to load configuration file.")
 	}
+	loadLangFile()
 
 	// HTTP config
 	httpTimeout, err := strconv.Atoi(mapConfig["http_timeout_sec"])
@@ -90,6 +92,28 @@ func loadConfigFile() bool {
 			if cfg.Load(configFile, mapConfig) == nil {
 				// And has been loaded succesfully
 				log.Println("Find configuration file at " + configFile)
+				ret = true
+				break
+			}
+		}
+	}
+	return ret
+}
+
+func loadLangFile() bool {
+	ret := false
+	envVariable := os.Getenv(PathConfEnvVariable)
+	if envVariable == "" {
+		envVariable = DefaultXdgConfigDirs
+	}
+	for _, path := range strings.Split(envVariable, ":") {
+		log.Println("Try to find messages lang file into " + path)
+		langFile := path + "/" + langFilePath
+		if _, err := os.Stat(langFile); err == nil {
+			// The config file exist
+			if cfg.Load(langFile, xmpp.MapLangs) == nil {
+				// And has been loaded succesfully
+				log.Println("Find messages lang file at " + langFile)
 				ret = true
 				break
 			}

@@ -100,10 +100,12 @@ func mainXMPP() {
 			} else {
 				// If body is the confirmation id, it will be considerated as accepted.
 				// In order to be compatible with all confirmations.
-				confirmation := WaitMessageAnswers[v.Body]
-				jidFrom, _ := xmpp.ParseJID(v.From)
-				if confirmation != nil && confirmation.JID == jidFrom.Bare() {
-					processConfirm(v, confirmation)
+				if len(v.Body) > 0 {
+					confirmation := WaitMessageAnswers[v.Body[0].Value]
+					jidFrom, _ := xmpp.ParseJID(v.From)
+					if confirmation != nil && confirmation.JID == jidFrom.Bare() {
+						processConfirm(v, confirmation)
+					}
 				}
 			}
 
