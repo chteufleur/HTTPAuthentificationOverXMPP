@@ -34,6 +34,7 @@ XMPP
  * __xmpp_secret__ : Account password
  * xmpp_debug : Enable debug log at true (default: false)
  * xmpp_verify_cert_validity : Enable certificate verification (default: true)
+ * xmpp_default_lang : Message default languages
 
 HTTP
  * http_port : HTTP port to bind (default: -1, desactive: -1)
@@ -47,6 +48,9 @@ HTTP
 __Bold config__ are mandatory.
 
 If ``http_bind_address_ipv4`` is set to ``0.0.0.0``, it will bind all address on IPv4 __AND__ IPv6.
+
+The lang messages file must be placed into the same directory than the configuration file.
+An example of this file can be found in [the repos](https://git.kingpenguin.tk/chteufleur/HTTPAuthentificationOverXMPP/src/master/messages.lang)
 
 ### Usage
 To ask authorization, just send an HTTP request to the path ``/auth`` with parameters:
