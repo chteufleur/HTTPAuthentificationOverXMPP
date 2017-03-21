@@ -93,7 +93,7 @@ func mainXMPP() {
 		case *xmpp.Presence:
 
 		case *xmpp.Message:
-			confirm := v.Confir
+			confirm := v.Confirm
 			if confirm != nil {
 				confirmation := WaitMessageAnswers[confirm.Id]
 				processConfirm(v, confirmation)

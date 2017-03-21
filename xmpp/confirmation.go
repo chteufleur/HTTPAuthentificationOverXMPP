@@ -65,7 +65,7 @@ func (confirmation *Confirmation) askViaMessage() {
 	m := xmpp.Message{From: jid.Full(), To: confirmation.JID, Type: xmpp.MessageTypeNormal}
 	m.Thread = xmpp.SessionID()
 	confirmation.setBodies(&m)
-	m.Confir = &xmpp.Confirm{Id: confirmation.Transaction, Method: confirmation.Method, URL: confirmation.Domain}
+	m.Confirm = &xmpp.Confirm{Id: confirmation.Transaction, Method: confirmation.Method, URL: confirmation.Domain}
 
 	log.Printf("%sSend message %v", LogInfo, m)
 	WaitMessageAnswers[confirmation.Transaction] = confirmation
